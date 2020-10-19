@@ -1,12 +1,9 @@
-import express from "express";
-const app = express();
-const port = 3000;
-
-app.get( "/", ( req, res ) => {
-    res.send( "Hello world!" );
-} );
-
-app.listen( port, () => {
-    // tslint:disable-next-line:no-console
-    console.log( `server started at http://localhost:${ port }` );
-} );
+import express = require('express');
+// Create a new express app instance
+const app: express.Application = express();
+app.get('/', function (req, res) {
+res.send('Hello World!');
+});
+app.listen(3000, () => {
+console.log('App is listening on port 3000!');
+});
