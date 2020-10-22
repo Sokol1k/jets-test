@@ -1,16 +1,21 @@
-import express from 'express';
-import db from '../database/index'
-const app: express.Application = express();
-app.get('/', function (req, res) {
-    res.send('Hello World!');
+import { resolve } from "path"
+import { config } from "dotenv"
+import express from 'express'
+import db from './database/index'
+
+import router from './routers'
+
+config({ path: resolve(__dirname, '../.env')})
+
+const app: express.Application = express()
+const PORT: string | number = process.env.PORT || 3000
+
+app.use(express.json())
+
+app.use('/api', router)
+
+app.listen(PORT, () => {
+    console.log(`App is listening on port ${PORT}!`);
 });
 
-db.authenticate()
-    .then(() => {
-        app.listen(3000, () => {
-            console.log('App is listening on port 3000!');
-        });        
-    })
-    .catch(err => {
-        console.error('Unable to connect to the database:', err);
-    })
+export default app
