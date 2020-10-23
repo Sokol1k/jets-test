@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "cross-env NODE_ENV=test jest",
     "build": "tsc",
     "prestart": "npm run build",
     "start": "cross-env NODE_ENV=development node dist/index.js"
