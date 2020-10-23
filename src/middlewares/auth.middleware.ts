@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
 import db from '../database/index'
+import bcrypt from 'bcryptjs'
 import Validator from '../validator'
 
-interface iRegisterValidator {
+interface iAuthValidator {
   name?: string | boolean,
   surname?: string | boolean,
   email?: string | boolean,
@@ -18,7 +19,7 @@ async function register(req : Request, res : Response, next : Function) : Promis
   const email : string | boolean = new Validator(req.body.email).email().required().showMessage()
   const password : string | boolean = new Validator(req.body.password).min(6).max(255).confirmPassword(req.body.confirm_password).required().showMessage()
 
-  const result : iRegisterValidator = {}
+  const result : iAuthValidator = {}
 
   if(name) {
     result.name = name
@@ -51,6 +52,46 @@ async function register(req : Request, res : Response, next : Function) : Promis
   }
 }
 
+async function login(req : Request, res : Response, next : Function) : Promise<void> {
+
+  const email : string | boolean = new Validator(req.body.email).email().required().showMessage()
+  const password : string | boolean = new Validator(req.body.password).min(6).max(255).required().showMessage()
+
+  const result : iAuthValidator = {}
+
+  if(email) {
+    result.email = email
+  }
+
+  if(password) {
+    result.password = password
+  }
+
+  if(Object.keys(result).length) {
+    res.status(422).send(result)
+  } else {
+    const user = await db.User.findOne({ where: {email: req.body.email} })
+    if (!user) {
+      res.status(403).send({
+        message: "Invalid login information!"
+      })
+      return
+    }
+
+    const isMatch = await bcrypt.compare(req.body.password, user.password)
+
+    if (!isMatch) {
+      res.status(403).send({
+        message: "Invalid login information!"
+      })
+      return
+    }
+
+    next()
+  }
+}
+
 export default {
-  register
+  register,
+  login
 }

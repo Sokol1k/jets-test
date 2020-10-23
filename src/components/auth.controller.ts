@@ -12,6 +12,16 @@ async function register(req : Request, res : Response) : Promise<void> {
   }
 }
 
+async function login(req : Request, res : Response) : Promise<void> {
+  try {
+    const data = await User.login(req.body)
+    res.status(200).send(data)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 export default {
-  register
+  register,
+  login
 }
