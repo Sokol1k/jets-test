@@ -1,17 +1,15 @@
-import { resolve } from "path"
-import { config } from "dotenv"
+import config from "config"
 import express from 'express'
-import db from './database/index'
 
+import middleware from './middlewares'
 import router from './routers'
 
-config({ path: resolve(__dirname, '../.env')})
-
 const app: express.Application = express()
-const PORT: string | number = process.env.PORT || 3000
+const PORT: number = config.get('port') || 3000
 
 app.use(express.json())
 
+app.use('/api', middleware)
 app.use('/api', router)
 
 app.listen(PORT, () => {

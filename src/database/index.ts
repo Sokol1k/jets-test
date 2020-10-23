@@ -1,26 +1,31 @@
-import { Sequelize } from 'sequelize'
+import { Sequelize, Dialect } from 'sequelize'
+import config from "config"
 import User from './models/user.model'
 
-const DATABASE : string = process.env.DB_DATABASE || 'postgres'
-const USER : string = process.env.DB_USER || 'admin'
-const PASSWORD : string = process.env.DB_PASSWORD || 'root'
-const HOST : string = process.env.DB_HOST || '127.0.0.1'
-const DIALECT : string = process.env.DB_DIALECT || 'postgres'
+interface iDBConfig {
+    readonly username: string,
+    readonly password: string,
+    readonly database: string,
+    readonly host: string,
+    readonly dialect: Dialect
+}
+
+const env : string = process.env.NODE_ENV || "development"
+
+const dbConfig : iDBConfig = config.get(env)
 
 const sequelize : Sequelize =  new Sequelize(
-    'admin',
-    'admin',
-    'admin',
+    dbConfig.database,
+    dbConfig.username,
+    dbConfig.password,
     {
-        host: '127.0.0.1',
-        dialect: 'postgres'
+        host: dbConfig.host,
+        dialect: dbConfig.dialect
     }
 )
 
-const db : any = {
+export default {
     Sequelize,
     sequelize,
     User: User(sequelize, Sequelize)
 };
-
-export default db
