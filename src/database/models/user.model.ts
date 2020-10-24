@@ -11,6 +11,10 @@ export default (sequelize : any, Sequelize : any) => {
     },
     password: {
       type: Sequelize.STRING
+    },
+    reset_link: {
+      type: Sequelize.STRING,
+      default: ''
     }
   })
 

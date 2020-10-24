@@ -6,9 +6,9 @@ describe('Register endpoint', () : void => {
     const res : any = await request(app)
       .post('/api/auth/register')
       .send({
-          name: 'Bob',
-          surname: 'Jones',
-          email: 'bob@gmail.com',
+          name: 'Danil',
+          surname: 'Sokol',
+          email: 'danil.sokolowskiy@gmail.com',
           password: '123456',
           confirm_password: '123456'
       })
@@ -19,9 +19,9 @@ describe('Register endpoint', () : void => {
     const res : any = await request(app)
       .post('/api/auth/register')
       .send({
-          name: 'Bob',
-          surname: 'Jones',
-          email: 'bob@gmail.com',
+          name: 'Danil',
+          surname: 'Sokol',
+          email: 'danil.sokolowskiy@gmail.com',
           password: '123456',
           confirm_password: '123456'
       })
@@ -47,21 +47,21 @@ describe('Register endpoint', () : void => {
 })
 
 describe('Login endpoint', () : void => {
-  it('should authorize the user.', async () : Promise<void> => {
+  it('should authorize the user', async () : Promise<void> => {
     const res : any = await request(app)
       .post('/api/auth/login')
       .send({
-          email: 'bob@gmail.com',
+          email: 'danil.sokolowskiy@gmail.com',
           password: '123456',
       })
     expect(res.statusCode).toEqual(200)
     expect(res.body.token).not.toBeUndefined()
   }),
-  it('should return an error that the username or password is incorrect', async () : Promise<void> => {
+  it('should return an error that the login or password is incorrect', async () : Promise<void> => {
     const res : any = await request(app)
       .post('/api/auth/login')
       .send({
-          email: 'bob+1@gmail.com',
+          email: 'danil.sokolowskiy+1@gmail.com',
           password: '123456',
       })
     expect(res.statusCode).toEqual(403)
@@ -77,5 +77,35 @@ describe('Login endpoint', () : void => {
     expect(res.statusCode).toEqual(422)
     expect(res.body.email).not.toBeUndefined()
     expect(res.body.password).not.toBeUndefined()
+  })
+})
+
+describe('Forget password endpoint', () : void => {
+  it('should send a message to the mail for reset password', async () : Promise<void> => {
+    const res : any = await request(app)
+      .post('/api/auth/forget')
+      .send({
+          email: 'danil.sokolowskiy@gmail.com',
+      })
+    expect(res.statusCode).toEqual(200)
+    expect(res.body.message).not.toBeUndefined()
+  }),
+  it('should return an error that the email is incorrect', async () : Promise<void> => {
+    const res : any = await request(app)
+      .post('/api/auth/forget')
+      .send({
+          email: 'danil.sokolowskiy+1@gmail.com',
+      })
+    expect(res.statusCode).toEqual(403)
+    expect(res.body.message).not.toBeUndefined()
+  }),
+  it('should return an error that the validation failed', async () : Promise<void> => {
+    const res : any = await request(app)
+      .post('/api/auth/forget')
+      .send({
+          email: '',
+      })
+    expect(res.statusCode).toEqual(422)
+    expect(res.body.email).not.toBeUndefined()
   })
 })
