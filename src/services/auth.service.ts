@@ -10,7 +10,7 @@ interface iCreateUser {
   readonly surname: string,
   readonly email: string,
   password: string,
-  readonly confirm_password: string
+  readonly confirmPassword: string
 }
 
 interface iLogin {
@@ -20,6 +20,12 @@ interface iLogin {
 
 interface iForget {
   readonly email: string,
+}
+
+interface iReset {
+  readonly resetLink: string,
+  readonly newPassword: string,
+  readonly confirmNewPassword: string
 }
 
 async function createUser(data: iCreateUser) : Promise<Sequelize> {
@@ -61,8 +67,25 @@ async function forget(data: iForget) : Promise<void> {
   }
 }
 
+async function reset(data: iReset) : Promise<void> {
+  try {
+    const decoded: any = jwt.verify(data.resetLink, config.get('resetSecret'))
+    await db.User.update({
+      password: await bcrypt.hash(data.newPassword, 12),
+      reset_link: ''
+    }, {
+      where: {
+        id: decoded.id
+      }
+    })
+  } catch(error) {
+    throw error
+  }
+}
+
 export default {
   createUser,
   login,
-  forget
+  forget,
+  reset
 }

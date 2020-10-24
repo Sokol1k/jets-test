@@ -1,5 +1,15 @@
 import request from 'supertest'
 import app from '../src/index'
+import db from '../src/database/index'
+
+beforeAll(async () : Promise<void> => {
+  await db.User.destroy({
+    where: {
+      email: "danil.sokolowskiy@gmail.com"
+    },
+    force: true
+  })
+})
 
 describe('Register endpoint', () : void => {
   it('should create a new user', async () : Promise<void> => {
@@ -10,7 +20,7 @@ describe('Register endpoint', () : void => {
           surname: 'Sokol',
           email: 'danil.sokolowskiy@gmail.com',
           password: '123456',
-          confirm_password: '123456'
+          confirmPassword: '123456'
       })
     expect(res.statusCode).toEqual(201)
     expect(res.body.message).not.toBeUndefined()
@@ -23,7 +33,7 @@ describe('Register endpoint', () : void => {
           surname: 'Sokol',
           email: 'danil.sokolowskiy@gmail.com',
           password: '123456',
-          confirm_password: '123456'
+          confirmPassword: '123456'
       })
     expect(res.statusCode).toEqual(403)
     expect(res.body.email).not.toBeUndefined()
@@ -36,7 +46,7 @@ describe('Register endpoint', () : void => {
           surname: '',
           email: '',
           password: '',
-          confirm_password: ''
+          confirmPassword: ''
       })
     expect(res.statusCode).toEqual(422)
     expect(res.body.name).not.toBeUndefined()
@@ -107,5 +117,39 @@ describe('Forget password endpoint', () : void => {
       })
     expect(res.statusCode).toEqual(422)
     expect(res.body.email).not.toBeUndefined()
+  })
+})
+
+describe('Reset password endpoint', () : void => {
+  let resetLink
+
+  beforeEach(async () => {
+    const user = await db.User.findOne({ where: {email: 'danil.sokolowskiy@gmail.com'}})
+    resetLink = user.reset_link
+  })
+
+  it('restore password', async () : Promise<void> => {
+    const res : any = await request(app)
+      .post('/api/auth/reset')
+      .send({
+        resetLink: resetLink,
+        newPassword: 'qwerty',
+        confirmNewPassword: 'qwerty'
+      })
+    expect(res.statusCode).toEqual(200)
+    expect(res.body.message).not.toBeUndefined()
+  })
+
+  it('should return an error that the validation failed', async () : Promise<void> => {
+    const res : any = await request(app)
+      .post('/api/auth/reset')
+      .send({
+        resetLink: '',
+        newPassword: '',
+        confirmNewPassword: ''
+      })
+    expect(res.statusCode).toEqual(422)
+    expect(res.body.resetLink).not.toBeUndefined()
+    expect(res.body.newPassword).not.toBeUndefined()
   })
 })

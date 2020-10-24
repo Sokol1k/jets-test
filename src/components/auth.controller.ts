@@ -32,8 +32,20 @@ async function forget(req : Request, res : Response) : Promise<void> {
   }
 }
 
+async function reset(req : Request, res : Response) : Promise<void> {
+  try {
+    await User.reset(req.body)
+    res.status(200).send({
+      message: 'Password changed successfully'
+    })
+  } catch(error) {
+    res.status(500).send(error)
+  }
+}
+
 export default {
   register,
   login,
-  forget
+  forget,
+  reset
 }
