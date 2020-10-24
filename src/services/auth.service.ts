@@ -28,7 +28,7 @@ interface iReset {
   readonly confirmNewPassword: string
 }
 
-async function createUser(data: iCreateUser) : Promise<Sequelize> {
+async function register(data: iCreateUser) : Promise<Sequelize> {
   try {
     data.password = await bcrypt.hash(data.password, 12)
     return await db.User.create(data)
@@ -41,7 +41,7 @@ async function login(data: iLogin) : Promise<{ token : string }> {
   try {
     const user = await db.User.findOne({ where: {email: data.email} })
     return {
-      token: jwt.sign({ user }, config.get('jwtSecret'), { expiresIn: '1d' })
+      token: jwt.sign({ id: user.id }, config.get('jwtSecret'), { expiresIn: '1d' })
     }
   } catch (error) {
     throw error
@@ -84,7 +84,7 @@ async function reset(data: iReset) : Promise<void> {
 }
 
 export default {
-  createUser,
+  register,
   login,
   forget,
   reset
