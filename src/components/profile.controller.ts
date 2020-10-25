@@ -12,6 +12,18 @@ async function update(req : Request | any, res : Response) : Promise<void> {
   }
 }
 
+async function changePassword(req : Request | any, res : Response) : Promise<void> {
+  try {
+    await Profile.changePassword(req.user.id, req.body.newPassword)
+    res.status(200).send({
+      message: 'Password changed successfully'
+    })
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 export default {
-  update
+  update,
+  changePassword
 }
