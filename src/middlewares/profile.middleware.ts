@@ -1,7 +1,9 @@
 import { Request, Response } from 'express'
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
-import Validator from '../validator'
+import Validator from '../helpers/validator'
+import ValidatorFile from '../helpers/validatorFile'
+import fs from 'fs'
 
 interface iUpdate {
   name?: string | boolean,
@@ -73,7 +75,29 @@ async function changePassword(req : Request | any, res : Response, next : Functi
   }
 }
 
+async function avatar(req : Request | any, res : Response, next : Function) : Promise<void> {
+  let avatar : string | boolean
+  let result : { avatar? : string | boolean } = {}
+
+  if (req.file) {
+    avatar = new ValidatorFile(req.file).size(10).fileType(['image/png', 'image/jpeg']).showMessage()
+    if(avatar) {
+      result.avatar = avatar
+      fs.unlinkSync(req.file.path)
+    }
+  } else if (req.body?.avatar !== 'null') {
+    result.avatar = "The field must be a file or null"
+  }
+
+  if(Object.keys(result).length) {
+    res.status(422).send(result)
+  } else {
+    next()
+  }
+}
+
 export default {
   update,
-  changePassword
+  changePassword,
+  avatar
 }

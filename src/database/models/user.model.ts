@@ -12,9 +12,13 @@ export default (sequelize : any, Sequelize : any) => {
     password: {
       type: Sequelize.STRING
     },
+    avatar: {
+      type: Sequelize.STRING,
+      default: null
+    },
     reset_link: {
       type: Sequelize.STRING,
-      default: ''
+      default: null
     }
   })
 

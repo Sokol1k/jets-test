@@ -23,7 +23,20 @@ async function changePassword(req : Request | any, res : Response) : Promise<voi
   }
 }
 
+async function avatar(req : Request | any, res : Response) : Promise<void> {
+  try {
+    const avatar : string = req.file?.path || req.body?.avatar === 'null' && null
+    await Profile.avatar(req.user.id, avatar)
+    res.status(200).send({
+      message: avatar ? 'The avatar was saved successfully' : 'The avatar has been successfully deleted'
+    })
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 export default {
   update,
-  changePassword
+  changePassword,
+  avatar
 }

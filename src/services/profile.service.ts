@@ -1,5 +1,6 @@
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
+import fs from 'fs'
 
 interface iUpdate {
   readonly name: string,
@@ -24,7 +25,20 @@ async function changePassword(id : number, newPassword : string) : Promise<void>
   }
 }
 
+async function avatar(id : number, avatar : string) : Promise<void> {
+  try {
+    const user = await db.User.findByPk(id)
+    if (user.avatar && !avatar) {
+      fs.unlinkSync(user.avatar)
+    }
+    await user.update({ avatar })
+  } catch(error) {
+    throw error
+  }
+}
+
 export default {
   update,
-  changePassword
+  changePassword,
+  avatar
 }

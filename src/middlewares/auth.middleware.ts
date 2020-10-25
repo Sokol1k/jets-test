@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
-import Validator from '../validator'
+import Validator from '../helpers/validator'
 
 interface iAuthValidator {
   name?: string | boolean,

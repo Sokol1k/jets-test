@@ -6,5 +6,6 @@ const router: express.Router = express.Router()
 
 router.put('/profile', profile.update)
 router.put('/profile/change-password', profile.changePassword)
+router.post('/profile/avatar', profile.avatar)
 
 export default router
