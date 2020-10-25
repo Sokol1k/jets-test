@@ -41,7 +41,7 @@ async function login(data: iLogin) : Promise<{ token : string }> {
   try {
     const user = await db.User.findOne({ where: {email: data.email} })
     return {
-      token: jwt.sign({ id: user.id }, config.get('jwtSecret'), { expiresIn: '1d' })
+      token: jwt.sign({ id: user.id, email: user.email }, config.get('jwtSecret'), { expiresIn: '1d' })
     }
   } catch (error) {
     throw error
