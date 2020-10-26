@@ -12,6 +12,18 @@ async function save(req : Request | any, res : Response) : Promise<void> {
   }
 }
 
+async function destroy(req : Request | any, res : Response) : Promise<void> {
+  try {
+    await File.destroy(req.params.id)
+    res.status(200).send({
+      message: 'File deleted successfully.'
+    })
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 export default {
-  save
+  save,
+  destroy
 }

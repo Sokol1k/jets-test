@@ -2,11 +2,10 @@ import request from 'supertest'
 import app from '../../src/index'
 import db from '../../src/database/index'
 import path from 'path'
-import fs from 'fs'
 
 export default () => {
-  describe('Save endpoint', () : void => {
-    let token
+  describe('Destroy endpoint', () : void => {
+    let token, fileId
 
     beforeAll(async () : Promise<void> => {
       await request(app)
@@ -25,36 +24,36 @@ export default () => {
               password: '123456',
           })
       token = res.body.token
-    })
 
-    it('should save file', async () : Promise<void> => {
-      const res : any = await request(app)
+      await request(app)
         .post('/api/file')
         .set('Authorization', 'bearer ' + token)
         .set('Content-type', 'multipart/form-data')
         .attach('file',  path.join(__dirname, '../data/default.jpeg'))
 
+      const file = await db.File.findOne({ where: { path: 'uploads/default.jpeg' }})
+      fileId = file.id
+    })
+
+    it('should remove file', async () : Promise<void> => {
+      const res : any = await request(app)
+        .delete(`/api/file/${fileId}`)
+        .set('Authorization', 'bearer ' + token)
+
       expect(res.statusCode).toEqual(200)
       expect(res.body.message).not.toBeUndefined()
     })
 
-    it('should return an error, the field should contain a file', async () : Promise<void> => {
+    it('should return an error that the file does not exist', async () : Promise<void> => {
       const res : any = await request(app)
-        .post('/api/file')
+        .delete('/api/file/7777')
         .set('Authorization', 'bearer ' + token)
 
       expect(res.statusCode).toEqual(422)
-      expect(res.body.file).not.toBeUndefined()
+      expect(res.body.message).not.toBeUndefined()
     })
 
     afterAll(async () => {
-      await db.File.destroy({
-        where: {
-          path: "uploads/default.jpeg"
-        },
-        force: true
-      })
-      fs.unlinkSync('uploads/default.jpeg')
       await db.User.destroy({
         where: {
           email: "UserFirst@gmail.com"

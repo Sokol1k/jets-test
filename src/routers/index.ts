@@ -10,5 +10,6 @@ router.put('/profile/change-password', profile.changePassword)
 router.post('/profile/avatar', profile.avatar)
 
 router.post('/file', file.save)
+router.delete('/file/:id', file.destroy)
 
 export default router
