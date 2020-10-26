@@ -2,11 +2,16 @@ import express from 'express'
 import multer from 'multer'
 
 import profile from './profile.middleware'
+import file from './file.middleware'
 
 const storageConfig = multer.diskStorage({
   destination: 'uploads/',
   filename: (req, file, cb) =>{
-    cb(null, Date.now() + '.' + file.mimetype.split('/')[1])
+    if (file.fieldname === 'file') {
+      cb(null, file.originalname)
+    } else {
+      cb(null, Date.now() + '.' + file.mimetype.split('/')[1])
+    }
   }
 })
 
@@ -19,5 +24,7 @@ const router: express.Router = express.Router()
 router.put('/profile', profile.update)
 router.put('/profile/change-password', profile.changePassword)
 router.post('/profile/avatar', upload.single('avatar'), profile.avatar)
+
+router.post('/file', upload.single('file'), file.save)
 
 export default router

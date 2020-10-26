@@ -1,6 +1,7 @@
 import { Sequelize, Dialect } from 'sequelize'
 import config from "config"
 import User from './models/user.model'
+import File from './models/file.model'
 
 interface iDBConfig {
     readonly username: string,
@@ -27,5 +28,6 @@ const sequelize : Sequelize =  new Sequelize(
 export default {
     Sequelize,
     sequelize,
-    User: User(sequelize, Sequelize)
+    User: User(sequelize, Sequelize),
+    File: File(sequelize, Sequelize)
 };

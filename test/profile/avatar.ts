@@ -1,6 +1,7 @@
 import request from 'supertest'
 import app from '../../src/index'
 import db from '../../src/database/index'
+import path from 'path'
 
 export default () => {
   describe('Avatar endpoint', () : void => {
@@ -30,7 +31,7 @@ export default () => {
         .post('/api/profile/avatar')
         .set('Authorization', 'bearer ' + token)
         .set('Content-type', 'multipart/form-data')
-        .attach('avatar',  `${__dirname}/data/default.jpeg`)
+        .attach('avatar',  path.join(__dirname, '../data/default.jpeg'))
 
       expect(res.statusCode).toEqual(200)
       expect(res.body.message).not.toBeUndefined()
@@ -41,7 +42,7 @@ export default () => {
         .post('/api/profile/avatar')
         .set('Authorization', 'bearer ' + token)
         .set('Content-type', 'multipart/form-data')
-        .attach('avatar',  `${__dirname}/data/size.png`)
+        .attach('avatar',  path.join(__dirname, '../data/size.png'))
 
       expect(res.statusCode).toEqual(422)
       expect(res.body.avatar).not.toBeUndefined()
@@ -52,7 +53,7 @@ export default () => {
         .post('/api/profile/avatar')
         .set('Authorization', 'bearer ' + token)
         .set('Content-type', 'multipart/form-data')
-        .attach('avatar',  `${__dirname}/data/type.txt`)
+        .attach('avatar',   path.join(__dirname, '../data/type.txt'))
 
       expect(res.statusCode).toEqual(422)
       expect(res.body.avatar).not.toBeUndefined()

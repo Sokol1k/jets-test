@@ -7,15 +7,22 @@ class ValidatorFile {
     return this
   }
 
+  public required() : ValidatorFile {
+    if (!this.file) {
+      this.message =  `Field must be required`
+    }
+    return this
+  }
+
   public size(size: number) : ValidatorFile {
-    if (this.file.size > (size * 1024 * 1024)) {
+    if (this.file?.size > (size * 1024 * 1024)) {
       this.message = `The file size exceeds ${size} MB`
     }
     return this
   }
 
   public fileType(types : Array<string>) : ValidatorFile {
-    if (!types.includes(this.file.mimetype)) {
+    if (!types.includes(this.file?.mimetype)) {
       this.message = `The file must be of the following types: ${types.join(', ')}`
     }
     return this
