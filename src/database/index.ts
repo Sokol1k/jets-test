@@ -1,19 +1,12 @@
-import { Sequelize, Dialect } from 'sequelize'
+import { Sequelize } from 'sequelize'
 import config from "config"
 import User from './models/user.model'
 import File from './models/file.model'
-
-interface iDBConfig {
-    readonly username: string,
-    readonly password: string,
-    readonly database: string,
-    readonly host: string,
-    readonly dialect: Dialect
-}
+import { IDBConfig } from '../interfaces/database.interface'
 
 const env : string = process.env.NODE_ENV || "development"
 
-const dbConfig : iDBConfig = config.get(env)
+const dbConfig : IDBConfig = config.get(env)
 
 const sequelize : Sequelize =  new Sequelize(
     dbConfig.database,

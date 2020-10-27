@@ -4,31 +4,9 @@ import jwt from 'jsonwebtoken'
 import config from "config"
 import { Sequelize } from 'sequelize/types'
 import nodemailer, { Transporter } from 'nodemailer'
+import { IRegister, ILogin, IForget, IReset } from '../interfaces/auth.interface'
 
-interface iCreateUser {
-  readonly name: string,
-  readonly surname: string,
-  readonly email: string,
-  password: string,
-  readonly confirmPassword: string
-}
-
-interface iLogin {
-  readonly email: string,
-  readonly password: string,
-}
-
-interface iForget {
-  readonly email: string,
-}
-
-interface iReset {
-  readonly resetLink: string,
-  readonly newPassword: string,
-  readonly confirmNewPassword: string
-}
-
-async function register(data: iCreateUser) : Promise<Sequelize> {
+async function register(data: IRegister) : Promise<Sequelize> {
   try {
     data.password = await bcrypt.hash(data.password, 12)
     return await db.User.create(data)
@@ -37,7 +15,7 @@ async function register(data: iCreateUser) : Promise<Sequelize> {
   }
 }
 
-async function login(data: iLogin) : Promise<{ token : string }> {
+async function login(data: ILogin) : Promise<{ token : string }> {
   try {
     const user = await db.User.findOne({ where: {email: data.email} })
     return {
@@ -48,7 +26,7 @@ async function login(data: iLogin) : Promise<{ token : string }> {
   }
 }
 
-async function forget(data: iForget) : Promise<void> {
+async function forget(data: IForget) : Promise<void> {
   try {
     const user = await db.User.findOne({ where: {email: data.email} })
     const token : string = jwt.sign({ id: user.id }, config.get('resetSecret'), { expiresIn: '20m' })
@@ -67,7 +45,7 @@ async function forget(data: iForget) : Promise<void> {
   }
 }
 
-async function reset(data: iReset) : Promise<void> {
+async function reset(data: IReset) : Promise<void> {
   try {
     const decoded: any = jwt.verify(data.resetLink, config.get('resetSecret'))
     await db.User.update({

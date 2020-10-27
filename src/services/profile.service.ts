@@ -1,14 +1,9 @@
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
+import { IUpdateForService } from '../interfaces/profile.interface'
 import fs from 'fs'
 
-interface iUpdate {
-  readonly name: string,
-  readonly surname: string,
-  readonly email: string,
-}
-
-async function update(id : number, data : iUpdate) : Promise<void> {
+async function update(id : number, data : IUpdateForService) : Promise<void> {
   try {
     await db.User.update(data, { where: { id } })
   } catch(error) {

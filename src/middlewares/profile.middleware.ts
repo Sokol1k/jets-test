@@ -3,25 +3,15 @@ import db from '../database/index'
 import bcrypt from 'bcryptjs'
 import Validator from '../helpers/validator'
 import ValidatorFile from '../helpers/validatorFile'
+import { IUpdateForMiddeware, IChangePassword } from '../interfaces/profile.interface'
 import fs from 'fs'
-
-interface iUpdate {
-  name?: string | boolean,
-  surname?: string | boolean,
-  email?: string | boolean
-}
-
-interface iChangePassword {
-  oldPassword?: string | boolean,
-  newPassword?: string | boolean
-}
 
 async function update(req : Request | any, res : Response, next : Function) : Promise<void> {
   const name : string | boolean = new Validator(req.body.name).min(2).max(255).required().showMessage()
   const surname : string | boolean = new Validator(req.body.surname).min(2).max(255).required().showMessage()
   const email : string | boolean = new Validator(req.body.email).email().required().showMessage()
 
-  const result : iUpdate = {}
+  const result : IUpdateForMiddeware = {}
 
   if(name) { result.name = name }
   if(surname) { result.surname = surname }
@@ -50,7 +40,7 @@ async function changePassword(req : Request | any, res : Response, next : Functi
   const oldPassword : string | boolean = new Validator(req.body.oldPassword).min(6).max(255).required().showMessage()
   const newPassword : string | boolean = new Validator(req.body.newPassword).min(6).max(255).confirmPassword(req.body.confirmNewPassword).required().showMessage()
 
-  const result : iChangePassword = {}
+  const result : IChangePassword = {}
 
   if(oldPassword) { result.oldPassword = oldPassword }
   if(newPassword) { result.newPassword = newPassword }
