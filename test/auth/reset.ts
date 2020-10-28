@@ -25,7 +25,7 @@ export default () => {
       resetLink = user.reset_link
     })
 
-    it('restore password', async () : Promise<void> => {
+    it('should restore password', async () : Promise<void> => {
       const res : any = await request(app)
         .post('/api/auth/reset')
         .send({

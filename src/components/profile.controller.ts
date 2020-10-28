@@ -2,6 +2,15 @@ import { Request, Response } from 'express'
 import Profile from '../services/profile.service'
 import { handleError } from '../helpers/error'
 
+async function get(req : Request | any, res : Response) : Promise<void> {
+  try {
+    const data = await Profile.get(req.user.id)
+    res.status(200).send(data)
+  } catch (error) {
+    error.statusCode ? handleError(error, res) : res.status(500).send(error)
+  }
+}
+
 async function update(req : Request | any, res : Response) : Promise<void> {
   try {
     await Profile.update(req.user.id,  { ...req.body, currentEmail: req.user.email })
@@ -37,6 +46,7 @@ async function avatar(req : Request | any, res : Response) : Promise<void> {
 }
 
 export default {
+  get,
   update,
   changePassword,
   avatar

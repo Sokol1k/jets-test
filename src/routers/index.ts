@@ -5,6 +5,7 @@ import file from '../components/file.controller'
 
 const router: express.Router = express.Router()
 
+router.get('/profile', profile.get)
 router.put('/profile', profile.update)
 router.put('/profile/change-password', profile.changePassword)
 router.post('/profile/avatar', profile.avatar)

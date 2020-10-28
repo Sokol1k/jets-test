@@ -38,6 +38,14 @@ export default () => {
       expect(res.body.message).not.toBeUndefined()
     })
 
+    it('should return an error that the user is not authorized', async () : Promise<void> => {
+      const res : any = await request(app)
+        .post('/api/file')
+
+      expect(res.statusCode).toEqual(401)
+      expect(res.body.message).not.toBeUndefined()
+    })
+
     it('should return an error, the field should contain a file', async () : Promise<void> => {
       const res : any = await request(app)
         .post('/api/file')

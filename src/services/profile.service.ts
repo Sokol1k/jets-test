@@ -1,8 +1,22 @@
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
 import { ErrorHandler } from '../helpers/error'
+import { Sequelize } from 'sequelize/types'
+import config from 'config'
 import { IUpdateForService, IChangePasswordForService } from '../interfaces/profile.interface'
 import fs from 'fs'
+
+async function get(id: number) : Promise<Sequelize> {
+  try {
+    const data = await db.User.findByPk(id, {
+      attributes: ['name', 'surname', 'email', 'avatar']
+    })
+    data.avatar = data.avatar && `${config.get('url')}/${data.avatar}`
+    return data
+  } catch (error) {
+    throw error
+  }
+}
 
 async function update(id : number, data : IUpdateForService) : Promise<void> {
   try {
@@ -54,6 +68,7 @@ async function avatar(id : number, avatar : string) : Promise<void> {
 }
 
 export default {
+  get,
   update,
   changePassword,
   avatar

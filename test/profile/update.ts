@@ -47,6 +47,14 @@ export default () => {
       expect(res.body.message).not.toBeUndefined()
     })
 
+    it('should return an error that the user is not authorized', async () : Promise<void> => {
+      const res : any = await request(app)
+        .put('/api/profile')
+
+      expect(res.statusCode).toEqual(401)
+      expect(res.body.message).not.toBeUndefined()
+    })
+
     it('should return an error that email is not free', async () : Promise<void> => {
       const res : any = await request(app)
         .put('/api/profile')

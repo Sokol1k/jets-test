@@ -1,11 +1,10 @@
 import request from 'supertest'
 import app from '../../src/index'
 import db from '../../src/database/index'
-import path from 'path'
 
 export default () => {
-  describe('Destroy endpoint', () : void => {
-    let token, fileId
+  describe('Get profile endpoint', () : void => {
+    let token
 
     beforeAll(async () : Promise<void> => {
       await request(app)
@@ -24,40 +23,25 @@ export default () => {
               password: '123456',
           })
       token = res.body.token
-
-      await request(app)
-        .post('/api/file')
-        .set('Authorization', 'bearer ' + token)
-        .set('Content-type', 'multipart/form-data')
-        .attach('file',  path.join(__dirname, '../data/default.jpeg'))
-
-      const file = await db.File.findOne({ where: { path: 'uploads/default.jpeg' }})
-      fileId = file.id
     })
 
-    it('should remove file', async () : Promise<void> => {
+    it('should return user profile', async () : Promise<void> => {
       const res : any = await request(app)
-        .delete(`/api/file/${fileId}`)
+        .get('/api/profile')
         .set('Authorization', 'bearer ' + token)
 
       expect(res.statusCode).toEqual(200)
-      expect(res.body.message).not.toBeUndefined()
+      expect(res.body.name).not.toBeUndefined()
+      expect(res.body.surname).not.toBeUndefined()
+      expect(res.body.email).not.toBeUndefined()
+      expect(res.body.avatar).not.toBeUndefined()
     })
 
     it('should return an error that the user is not authorized', async () : Promise<void> => {
       const res : any = await request(app)
-        .delete(`/api/file/${fileId}`)
+        .get('/api/profile')
 
       expect(res.statusCode).toEqual(401)
-      expect(res.body.message).not.toBeUndefined()
-    })
-
-    it('should return an error that the file does not exist', async () : Promise<void> => {
-      const res : any = await request(app)
-        .delete('/api/file/7777')
-        .set('Authorization', 'bearer ' + token)
-
-      expect(res.statusCode).toEqual(422)
       expect(res.body.message).not.toBeUndefined()
     })
 
