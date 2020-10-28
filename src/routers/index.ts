@@ -10,6 +10,7 @@ router.put('/profile', profile.update)
 router.put('/profile/change-password', profile.changePassword)
 router.post('/profile/avatar', profile.avatar)
 
+router.get('/file', file.getAll)
 router.post('/file', file.save)
 router.delete('/file/:id', file.destroy)
 

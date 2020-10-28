@@ -1,6 +1,14 @@
 import db from '../database/index'
 import fs from 'fs'
 
+async function getAll(id: number) {
+  try {
+    return db.File.findAll({ where: { user_id: id }})
+  } catch(error) {
+    throw error
+  }
+}
+
 async function save(id: number, file: any) {
   try {
     await db.File.create({
@@ -26,6 +34,7 @@ async function destroy(id: number) {
 }
 
 export default {
+  getAll,
   save,
   destroy
 }

@@ -13,6 +13,8 @@ const app: express.Application = express()
 const PORT: number = config.get('port') || 3000
 
 app.use(express.json())
+app.use('/uploads', express.static('uploads'));
+app.use(express.urlencoded({ extended: false }));
 
 app.use('/api', authMiddleware)
 app.use('/api', authRouter)

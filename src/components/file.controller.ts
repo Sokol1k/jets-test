@@ -1,6 +1,15 @@
 import { Request, Response } from 'express'
 import File from '../services/file.service'
 
+async function getAll(req : Request | any, res : Response) : Promise<void> {
+  try {
+    const data = await File.getAll(req.user.id)
+    res.status(200).send(data)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+}
+
 async function save(req : Request | any, res : Response) : Promise<void> {
   try {
     await File.save(req.user.id, req.file)
@@ -24,6 +33,7 @@ async function destroy(req : Request | any, res : Response) : Promise<void> {
 }
 
 export default {
+  getAll,
   save,
   destroy
 }
