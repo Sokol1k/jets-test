@@ -1,20 +1,41 @@
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
-import { IUpdateForService } from '../interfaces/profile.interface'
+import { ErrorHandler } from '../helpers/error'
+import { IUpdateForService, IChangePasswordForService } from '../interfaces/profile.interface'
 import fs from 'fs'
 
 async function update(id : number, data : IUpdateForService) : Promise<void> {
   try {
+    if (!(data.email === data.currentEmail)) {
+      const user = await db.User.findOne({ where: {email: data.email} })
+
+      if (user) {
+        throw new ErrorHandler(403, {
+          email: 'This email is not free'
+        })
+      }
+    }
     await db.User.update(data, { where: { id } })
   } catch(error) {
     throw error
   }
 }
 
-async function changePassword(id : number, newPassword : string) : Promise<void> {
+async function changePassword(id : number, data : IChangePasswordForService) : Promise<void> {
   try {
-    const password = await bcrypt.hash(newPassword, 12)
-    await db.User.update({ password }, { where: { id } })
+    const user = await db.User.findByPk(id)
+
+    if(user) {
+      const isMatch = await bcrypt.compare(data.oldPassword, user.password)
+
+      if (!isMatch) {
+        throw new ErrorHandler(403, {
+          oldPassword: 'Incorrect password'
+        })
+      }
+    }
+    const password = await bcrypt.hash(data.newPassword, 12)
+    await user.update({ password })
   } catch(error) {
     throw error
   }

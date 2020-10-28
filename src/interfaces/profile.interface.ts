@@ -8,9 +8,15 @@ export interface IUpdateForService {
   readonly name: string,
   readonly surname: string,
   readonly email: string,
+  readonly currentEmail: string
 }
 
-export interface IChangePassword {
+export interface IChangePasswordForMiddeware {
   oldPassword?: string | boolean,
   newPassword?: string | boolean
+}
+
+export interface IChangePasswordForService {
+  readonly oldPassword: string,
+  readonly newPassword: string
 }

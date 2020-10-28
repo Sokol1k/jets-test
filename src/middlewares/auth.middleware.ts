@@ -1,6 +1,4 @@
 import { Request, Response } from 'express'
-import db from '../database/index'
-import bcrypt from 'bcryptjs'
 import Validator from '../helpers/validator'
 import { IAuthValidator } from '../interfaces/auth.interface'
 
@@ -22,16 +20,7 @@ async function register (req : Request, res : Response, next : Function) : Promi
     if(Object.keys(result).length) {
       res.status(422).send(result)
     } else {
-      const user = await db.User.findOne({ where: { email: req.body.email } })
-
-      if (user) {
-        res.status(403).send({
-          email: 'This email is not free'
-        })
-        return
-      } else {
-        next()
-      }
+      next()
     }
   } catch (error) {
     res.status(500).send(error)
@@ -46,30 +35,11 @@ async function login (req : Request, res : Response, next : Function) : Promise<
     const result : IAuthValidator = {}
 
     if(email) { result.email = email }
-
     if(password) { result.password = password }
 
     if(Object.keys(result).length) {
       res.status(422).send(result)
     } else {
-      const user = await db.User.findOne({ where: {email: req.body.email} })
-
-      if (!user) {
-        res.status(403).send({
-          message: "Invalid login information!"
-        })
-        return
-      }
-
-      const isMatch = await bcrypt.compare(req.body.password, user.password)
-
-      if (!isMatch) {
-        res.status(403).send({
-          message: "Invalid login information!"
-        })
-        return
-      }
-
       next()
     }
   } catch (error) {
@@ -88,15 +58,6 @@ async function forget (req : Request, res : Response, next : Function) : Promise
     if(Object.keys(result).length) {
       res.status(422).send(result)
     } else {
-      const user = await db.User.findOne({ where: {email: req.body.email} })
-
-      if (!user) {
-        res.status(403).send({
-          message: "No such email exists"
-        })
-        return
-      }
-
       next()
     }
   } catch (error) {

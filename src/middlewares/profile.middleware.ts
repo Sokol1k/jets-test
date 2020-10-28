@@ -1,9 +1,7 @@
 import { Request, Response } from 'express'
-import db from '../database/index'
-import bcrypt from 'bcryptjs'
 import Validator from '../helpers/validator'
 import ValidatorFile from '../helpers/validatorFile'
-import { IUpdateForMiddeware, IChangePassword } from '../interfaces/profile.interface'
+import { IUpdateForMiddeware, IChangePasswordForMiddeware } from '../interfaces/profile.interface'
 import fs from 'fs'
 
 async function update(req : Request | any, res : Response, next : Function) : Promise<void> {
@@ -20,19 +18,7 @@ async function update(req : Request | any, res : Response, next : Function) : Pr
   if(Object.keys(result).length) {
     res.status(422).send(result)
   } else {
-
-    if (!(req.user.email === req.body.email)) {
-      const user = await db.User.findOne({ where: {email: req.body.email} })
-
-      if (user) {
-        res.status(403).send({
-          email: 'This email is not free'
-        })
-        return
-      }
-    } else {
-      next()
-    }
+    next()
   }
 }
 
@@ -40,7 +26,7 @@ async function changePassword(req : Request | any, res : Response, next : Functi
   const oldPassword : string | boolean = new Validator(req.body.oldPassword).min(6).max(255).required().showMessage()
   const newPassword : string | boolean = new Validator(req.body.newPassword).min(6).max(255).confirmPassword(req.body.confirmNewPassword).required().showMessage()
 
-  const result : IChangePassword = {}
+  const result : IChangePasswordForMiddeware = {}
 
   if(oldPassword) { result.oldPassword = oldPassword }
   if(newPassword) { result.newPassword = newPassword }
@@ -48,19 +34,6 @@ async function changePassword(req : Request | any, res : Response, next : Functi
   if(Object.keys(result).length) {
     res.status(422).send(result)
   } else {
-    const user = await db.User.findByPk(req.user.id)
-
-    if(user) {
-      const isMatch = await bcrypt.compare(req.body.oldPassword, user.password)
-
-      if (!isMatch) {
-        res.status(403).send({
-          oldPassword: 'Incorrect password'
-        })
-        return
-      }
-    }
-
     next()
   }
 }
