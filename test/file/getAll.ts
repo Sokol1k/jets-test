@@ -31,8 +31,8 @@ export default () => {
         .set('Content-type', 'multipart/form-data')
         .attach('file',  path.join(__dirname, '../data/default.jpeg'))
 
-      const file = await db.File.findOne({ where: { path: 'uploads/default.jpeg' }})
-      fileId = file.id
+      const file = await db.File.findAll()
+      fileId = file[0].id
     })
 
     it('should return all files', async () : Promise<void> => {

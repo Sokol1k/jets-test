@@ -4,8 +4,14 @@ import multer from 'multer'
 import profile from './profile.middleware'
 import file from './file.middleware'
 
+import fs from 'fs'
+
 const storageConfig = multer.diskStorage({
-  destination: 'uploads/',
+  destination: function (req : any, file, cb) {
+    const path = `./uploads/${req.user.id}`
+    fs.mkdirSync(path, { recursive: true })
+    cb(null, path)
+  },
   filename: (req, file, cb) =>{
     if (file.fieldname === 'file') {
       cb(null, file.originalname)
