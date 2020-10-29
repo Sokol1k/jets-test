@@ -1,12 +1,31 @@
-import express from "express";
-const app = express();
-const port = 3000;
+import config from "config"
+import express from 'express'
 
-app.get( "/", ( req, res ) => {
-    res.send( "Hello world!" );
-} );
+import authMiddleware from './middlewares/auth'
+import authRouter from './routers/auth'
 
-app.listen( port, () => {
-    // tslint:disable-next-line:no-console
-    console.log( `server started at http://localhost:${ port }` );
-} );
+import verifyToken from './middlewares/verifyToken'
+
+import middleware from './middlewares'
+import router from './routers'
+
+const app: express.Application = express()
+const PORT: number = config.get('port') || 3000
+
+app.use(express.json())
+app.use('/uploads', express.static('uploads'));
+app.use(express.urlencoded({ extended: false }));
+
+app.use('/api', authMiddleware)
+app.use('/api', authRouter)
+
+app.use(verifyToken)
+
+app.use('/api', middleware)
+app.use('/api', router)
+
+app.listen(PORT, () => {
+    console.log(`App is listening on port ${PORT}!`);
+});
+
+export default app

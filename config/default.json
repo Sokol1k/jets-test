@@ -1,0 +1,29 @@
+{
+  "port": 3000,
+  "jwtSecret": "secret",
+  "resetSecret": "resetsecret",
+  "url": "http://localhost:3000",
+
+  "mail": {
+    "service": "gmail",
+    "auth": {
+      "user": "danil.sokolovskyi@computools.com",
+      "pass": "Myworkpc_25"
+    }
+  },
+
+  "development": {
+    "username": "admin",
+    "password": "admin",
+    "database": "admin",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "admin",
+    "password": "admin",
+    "database": "admin",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
