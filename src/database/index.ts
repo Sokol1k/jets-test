@@ -21,6 +21,6 @@ const sequelize : Sequelize =  new Sequelize(
 export default {
     Sequelize,
     sequelize,
-    User: User(sequelize, Sequelize),
-    File: File(sequelize, Sequelize)
+    User: User(sequelize),
+    File: File(sequelize)
 };

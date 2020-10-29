@@ -1,24 +1,27 @@
-export default (sequelize : any, Sequelize : any) => {
-  const User = sequelize.define('user', {
+import { Sequelize, STRING } from "sequelize"
+import { IUser } from "../../interfaces/database.interface";
+
+export default (sequelize : Sequelize) => {
+  const User = sequelize.define<IUser>('user', {
     name: {
-      type: Sequelize.STRING
+      type: STRING
     },
     surname: {
-      type: Sequelize.STRING
+      type: STRING
     },
     email: {
-      type: Sequelize.STRING
+      type: STRING
     },
     password: {
-      type: Sequelize.STRING
+      type: STRING
     },
     avatar: {
-      type: Sequelize.STRING,
-      default: null
+      type: STRING,
+      defaultValue: null
     },
     reset_link: {
-      type: Sequelize.STRING,
-      default: null
+      type: STRING,
+      defaultValue: null
     }
   })
 

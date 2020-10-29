@@ -1,18 +1,20 @@
 import db from '../database/index'
 import bcrypt from 'bcryptjs'
 import { ErrorHandler } from '../helpers/error'
-import { Sequelize } from 'sequelize/types'
 import config from 'config'
 import { IUpdateForService, IChangePasswordForService } from '../interfaces/profile.interface'
+import { IUser } from "../interfaces/database.interface";
 import fs from 'fs'
 
-async function get(id: number) : Promise<Sequelize> {
+async function get(id: number) : Promise<IUser | void> {
   try {
     const data = await db.User.findByPk(id, {
       attributes: ['name', 'surname', 'email', 'avatar']
     })
-    data.avatar = data.avatar && `${config.get('url')}/${data.avatar}`
-    return data
+    if (data) {
+      data.avatar = data.avatar && `${config.get('url')}/${data.avatar}`
+      return data
+    }
   } catch (error) {
     throw error
   }
@@ -47,9 +49,10 @@ async function changePassword(id : number, data : IChangePasswordForService) : P
           oldPassword: 'Incorrect password'
         })
       }
+
+      const password = await bcrypt.hash(data.newPassword, 12)
+      await user.update({ password })
     }
-    const password = await bcrypt.hash(data.newPassword, 12)
-    await user.update({ password })
   } catch(error) {
     throw error
   }
@@ -58,10 +61,12 @@ async function changePassword(id : number, data : IChangePasswordForService) : P
 async function avatar(id : number, avatar : string) : Promise<void> {
   try {
     const user = await db.User.findByPk(id)
-    if (user.avatar && !avatar) {
-      fs.unlinkSync(user.avatar)
+    if (user) {
+      if (user.avatar && !avatar) {
+        fs.unlinkSync(user.avatar)
+      }
+      await user.update({ avatar })
     }
-    await user.update({ avatar })
   } catch(error) {
     throw error
   }

@@ -1,13 +1,16 @@
-export default (sequelize : any, Sequelize : any) => {
-  const File = sequelize.define('file', {
+import { Sequelize, INTEGER, STRING } from "sequelize"
+import { IFile } from "../../interfaces/database.interface"
+
+export default (sequelize : Sequelize) => {
+  const File = sequelize.define<IFile>('file', {
     user_id: {
-      type: Sequelize.INTEGER
+      type: INTEGER
     },
     path: {
-      type: Sequelize.STRING
+      type: STRING
     },
     type: {
-      type: Sequelize.STRING
+      type: STRING
     }
   })
 

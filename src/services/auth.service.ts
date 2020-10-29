@@ -2,12 +2,12 @@ import db from '../database/index'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import config from "config"
-import { Sequelize } from 'sequelize/types'
 import nodemailer, { Transporter } from 'nodemailer'
 import { ErrorHandler } from '../helpers/error'
 import { IRegister, ILogin, IForget, IReset } from '../interfaces/auth.interface'
+import { IUser } from "../interfaces/database.interface";
 
-async function register(data: IRegister) : Promise<Sequelize> {
+async function register(data: IRegister) : Promise<IUser> {
   try {
     const user = await db.User.findOne({ where: { email: data.email } })
 
