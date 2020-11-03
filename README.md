@@ -20,14 +20,22 @@ $ cp .env.dist .env
 ```sh
 $ sudo docker-compose up
 ```
-4. Run project
+4. Install packages
+```sh
+$ npm install
+```
+5. Run migrations for database
+```sh
+$ npx sequelize-cli db:migrate
+```
+6. Run project
 ```sh
 $ npm run start
 ```
 
 ### Test
 
-For testing purposes, follow steps 1-3 from the **Installation** section. And after that do next step
+For testing purposes, follow steps 1-5 from the **Installation** section. And after that do next step
 ```sh
 $ npm run test
 ```
