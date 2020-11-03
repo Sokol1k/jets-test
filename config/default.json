@@ -7,22 +7,22 @@
   "mail": {
     "service": "gmail",
     "auth": {
-      "user": "danil.sokolovskyi@computools.com",
-      "pass": "Myworkpc_25"
+      "user": "your_gmail@gmail.com",
+      "pass": "your_password"
     }
   },
 
   "development": {
     "username": "admin",
     "password": "admin",
-    "database": "admin",
+    "database": "jest-test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "admin",
     "password": "admin",
-    "database": "admin",
+    "database": "jest-test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   }
